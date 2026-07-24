@@ -1,26 +1,21 @@
 # Deployment
 
-This site deploys to Cloudflare Pages from GitHub Actions on every push to `main`.
+This site deploys through Cloudflare Git integration on every push to `main` in `carlkoblavie/swimafricaghana`.
 
-## One-time setup
+## Cloudflare setup
 
-1. Push this repository to GitHub.
-2. In the GitHub repository, add these Actions secrets:
-   - `CLOUDFLARE_ACCOUNT_ID`
-   - `CLOUDFLARE_API_TOKEN`
-3. The Cloudflare API token needs Pages edit access.
-4. Confirm the Cloudflare Pages project name is `swimafricaghana`.
+- Project type: Worker with static assets
+- Worker name: `swimafricaghana`
+- Git repository: `carlkoblavie/swimafricaghana`
+- Branch: `main`
+- Build command: empty
+- Deploy command: `npx wrangler deploy`
 
-If the Pages project has a different name, update it in:
-
-- `.github/workflows/deploy.yml`
-- `package.json`
-- `wrangler.jsonc`
-
-## Manual deploy
+## Local/manual deploy
 
 ```bash
 npm install
 npm run deploy
 ```
 
+Static assets are served from the repository root via `wrangler.jsonc`. Files listed in `.assetsignore` are not uploaded as public assets.
