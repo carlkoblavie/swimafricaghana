@@ -59,7 +59,7 @@
   .btn-light:hover{border-color:var(--blue);color:var(--blue-deep)}
   .btn-sm{padding:9px 15px;font-size:.86rem}
   .btn-block{width:100%}
-  .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+  .btn:disabled{opacity:.72;cursor:not-allowed;box-shadow:none;filter:saturate(.75)}
 
   header{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
     border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
@@ -396,7 +396,7 @@
     const year = catalog.swimYear;
     document.getElementById('catalogMeta').innerHTML = `
       <span class="chip">${iconCalendar()} ${escapeHtml(year?.name || 'Current schedule')}</span>
-      <span class="chip">${iconLock()} Paystack-ready checkout</span>
+      <span class="chip">${iconLock()} Paystack integration in progress</span>
     `;
     const root = document.getElementById('programs');
     if (!catalog.programs.length) {
@@ -445,7 +445,7 @@
           </div>
           <div class="price">
             <div><b>${money(level.fee.raw)}</b><br><span>per learner</span></div>
-            <button class="btn btn-primary btn-sm" onclick="openRegistration('${escapeAttr(program.publicId)}','${escapeAttr(level.publicId)}')">Register</button>
+            <button class="btn btn-primary btn-sm" disabled title="Registration will open after Paystack integration is complete">Coming soon</button>
           </div>
         </div>
       </article>
