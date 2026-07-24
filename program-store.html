@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Program Store - Swim Africa Ghana</title>
+<meta name="description" content="Choose a Swim Africa Ghana program, add learners, and begin registration for swim lessons in Accra and Kumasi." />
+<link rel="icon" type="image/png" href="assets/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#EAF4FB;
+    --sky-2:#F5FAFE;
+    --paper:#FFFFFF;
+    --blue:#12A5E8;
+    --blue-deep:#0B6FB0;
+    --blue-ink:#0A3450;
+    --bright:#38C0F5;
+    --orange:#E86C19;
+    --orange-soft:#F4842E;
+    --green:#178F4B;
+    --green-soft:#E9F8EF;
+    --red:#B42318;
+    --red-soft:#FEF3F2;
+    --ink:#0E2A3A;
+    --body:#41606E;
+    --muted:#6E8794;
+    --line:#D8E8F2;
+    --maxw:1180px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    color:var(--body);background:var(--sky);line-height:1.65;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Poppins',system-ui,sans-serif;color:var(--ink);line-height:1.12;letter-spacing:-.02em;font-weight:700}
+  a{color:inherit;text-decoration:none}
+  button,input,select,textarea{font:inherit}
+  img{display:block;max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:.95rem;
+    border-radius:999px;padding:12px 22px;border:0;cursor:pointer;white-space:nowrap;
+    transition:transform .15s var(--ease),box-shadow .25s,background .25s,border-color .2s,color .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:linear-gradient(135deg,var(--bright),var(--blue-deep));color:#fff;box-shadow:0 12px 26px -12px rgba(11,111,176,.7)}
+  .btn-primary:hover{box-shadow:0 16px 32px -12px rgba(11,111,176,.9)}
+  .btn-orange{background:linear-gradient(135deg,var(--orange-soft),var(--orange));color:#fff;box-shadow:0 12px 26px -12px rgba(232,108,25,.7)}
+  .btn-orange:hover{filter:brightness(1.05)}
+  .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
+  .btn-light{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn-light:hover{border-color:var(--blue);color:var(--blue-deep)}
+  .btn-sm{padding:9px 15px;font-size:.86rem}
+  .btn-block{width:100%}
+  .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+
+  header{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
+  header.scrolled{border-color:var(--line);box-shadow:0 8px 28px -22px rgba(10,52,80,.6)}
+  .nav{display:flex;align-items:center;gap:22px;height:74px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand img{height:75px;width:auto}
+  .nav-links{display:flex;gap:26px;margin-left:auto}
+  .nav-links a{font-size:.95rem;color:var(--body);font-weight:500;transition:color .2s}
+  .nav-links a:hover,.nav-links a.active{color:var(--blue-deep)}
+  .nav-cta{display:flex;gap:10px;align-items:center}
+  .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;margin-left:auto;background:none;border:0;cursor:pointer;padding:10px}
+  .hamburger span{display:block;height:2.5px;width:100%;background:var(--ink);border-radius:2px;transition:transform .3s var(--ease),opacity .2s var(--ease)}
+  header.menu-open .hamburger span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  header.menu-open .hamburger span:nth-child(2){opacity:0}
+  header.menu-open .hamburger span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+  .mobile-menu{display:none}
+  @media (max-width:900px){
+    .nav-links,.nav-cta{display:none}
+    .hamburger{display:flex}
+    .mobile-menu{display:block;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);
+      box-shadow:0 24px 40px -26px rgba(10,52,80,.5);padding:14px 20px 22px;max-height:calc(100dvh - 74px);overflow-y:auto;
+      opacity:0;visibility:hidden;transform:translateY(-10px);pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease),visibility .25s}
+    header.menu-open .mobile-menu{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+    .mobile-menu a{display:block;padding:13px 8px;font-size:1.05rem;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line)}
+    .mobile-menu .mm-cta{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+    .mobile-menu .mm-cta a{border-bottom:0}
+  }
+
+  .store-hero{position:relative;background:var(--blue-ink);color:#fff;overflow:hidden}
+  .store-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.44}
+  .store-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(96deg,rgba(10,52,80,.92) 0%,rgba(11,111,176,.72) 48%,rgba(10,52,80,.38) 100%)}
+  .store-hero .wrap{position:relative;z-index:2;min-height:360px;display:flex;align-items:center;padding-top:56px;padding-bottom:56px}
+  .hero-copy{max-width:690px}
+  .store-hero h1{color:#fff;font-size:clamp(2.1rem,5vw,3.75rem);font-weight:800;margin:14px 0 16px}
+  .store-hero p{font-size:clamp(1rem,1.5vw,1.14rem);color:rgba(255,255,255,.92);max-width:58ch}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+
+  main{padding:58px 0 86px}
+  .store-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:26px}
+  .store-head h2{font-size:clamp(1.6rem,3vw,2.35rem);margin:8px 0 6px}
+  .catalog-meta{display:flex;gap:10px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:.84rem;font-weight:600}
+  .chip svg{color:var(--blue-deep)}
+  .notice{display:none;margin-bottom:18px;padding:14px 16px;border-radius:14px;background:#fff;border:1px solid var(--line);color:var(--body);font-size:.92rem}
+  .notice.show{display:block}
+  .programs{display:flex;flex-direction:column;gap:30px}
+  .program-block{scroll-margin-top:100px}
+  .program-title{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:13px;border-bottom:2px solid var(--line)}
+  .program-title h3{font-size:clamp(1.25rem,2.4vw,1.75rem)}
+  .program-title p{max-width:58ch;color:var(--muted);font-size:.96rem}
+  .levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  @media (max-width:980px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:680px){.levels{grid-template-columns:1fr}}
+  .level{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;min-height:100%;
+    transition:box-shadow .25s,border-color .25s,transform .25s}
+  .level:hover{box-shadow:0 24px 48px -34px rgba(10,52,80,.5);border-color:#CFE6F2;transform:translateY(-2px)}
+  .level-media{height:148px;overflow:hidden;background:var(--sky-2)}
+  .level-media img{width:100%;height:100%;object-fit:cover}
+  .level-body{padding:20px;display:flex;flex-direction:column;gap:14px;flex:1}
+  .badges{display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 9px;background:var(--sky);color:var(--blue-deep)}
+  .badge.ok{background:var(--green-soft);color:var(--green)}
+  .badge.code{background:#F2F7FB;color:var(--muted)}
+  .level h4{font-size:1.12rem;font-weight:700}
+  .level p{font-size:.94rem;color:var(--body)}
+  .facts{display:grid;gap:8px;margin-top:auto}
+  .fact{display:flex;align-items:center;gap:9px;font-size:.91rem;color:var(--muted)}
+  .fact svg{color:var(--orange);flex:none}
+  .price{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-top:4px;border-top:1px dashed var(--line)}
+  .price b{font-family:'Poppins',sans-serif;font-size:1.35rem;color:var(--ink);line-height:1}
+  .price span{font-size:.78rem;color:var(--muted)}
+
+  .empty{background:#fff;border:1px dashed var(--line);border-radius:16px;padding:28px;color:var(--muted)}
+
+  footer{background:var(--blue-ink);color:rgba(255,255,255,.7);padding:42px 0}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  .foot img{height:34px}
+  .heart{color:var(--orange-soft)}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:8px}
+
+  .scrim{position:fixed;inset:0;background:rgba(10,52,80,.62);z-index:100;display:none;justify-content:center;overflow-y:auto;padding:24px;backdrop-filter:blur(4px)}
+  .scrim.open{display:flex;align-items:flex-start}
+  .panel{width:100%;max-width:920px;background:var(--sky);border-radius:18px;overflow:hidden;margin:auto 0;box-shadow:0 34px 80px -34px rgba(0,0,0,.65)}
+  .panel-head{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:14px;background:#fff;border-bottom:1px solid var(--line);padding:18px 24px}
+  .panel-head h2{font-size:1.05rem}
+  .panel-head p{font-size:.82rem;color:var(--muted)}
+  .icon-btn{margin-left:auto;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+  .reg-grid{display:grid;grid-template-columns:1fr 330px}
+  .reg-main{padding:24px}
+  .reg-side{background:#fff;border-left:1px solid var(--line);padding:24px}
+  @media(max-width:780px){.reg-grid{grid-template-columns:1fr}.reg-side{border-left:0;border-top:1px solid var(--line)}}
+  .block{margin-bottom:26px}
+  .block h3{font-size:1rem;margin-bottom:4px}
+  .hint{font-size:.86rem;color:var(--muted);margin-bottom:14px}
+  .fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:560px){.fieldrow{grid-template-columns:1fr}}
+  label.f{display:block;font-size:.86rem;font-weight:700;color:var(--ink);margin:13px 0 6px}
+  label.f small{font-weight:500;color:var(--muted)}
+  .inp{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.94rem;background:#fff;color:var(--ink)}
+  .inp:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(18,165,232,.16)}
+  textarea.inp{min-height:82px;resize:vertical}
+  .learner-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .learner-empty{border:1px dashed var(--line);border-radius:14px;padding:20px;text-align:center;color:var(--muted);font-size:.92rem;background:#fff}
+  .learner{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--sky);color:var(--blue-deep);display:grid;place-items:center;font-weight:800;font-size:.8rem;flex:none}
+  .learner-meta{flex:1;min-width:0}
+  .learner-meta b{display:block;color:var(--ink);font-weight:700;font-size:.95rem}
+  .learner-meta span{display:block;color:var(--muted);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .learner-actions{display:flex;gap:8px;flex:none}
+  .small-icon{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+  .small-icon:hover{border-color:var(--blue);color:var(--blue-deep)}
+  .small-icon.remove:hover{border-color:var(--red);color:var(--red)}
+  .summary{position:sticky;top:94px}
+  .summary h3{font-size:1rem;margin-bottom:2px}
+  .summary .muted{color:var(--muted);font-size:.82rem;margin-bottom:14px}
+  .sum-line{display:flex;justify-content:space-between;gap:16px;font-size:.9rem;color:var(--body);padding:6px 0}
+  .sum-line.total{border-top:1px dashed var(--line);margin-top:8px;padding-top:12px;font-size:1.08rem;font-weight:800;color:var(--ink)}
+  .sum-note{font-size:.78rem;color:var(--muted);line-height:1.55;margin-top:12px}
+  .secure{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-size:.8rem;color:var(--muted)}
+  .secure b{color:#011B33}
+  .modal{width:100%;max-width:640px;background:#fff;border-radius:18px;margin:auto 0;padding:24px}
+  .modal-head{display:flex;align-items:center;margin-bottom:8px}
+  .modal-head h3{font-size:1.1rem}
+  .modal-foot{display:flex;justify-content:flex-end;gap:12px;margin-top:22px;flex-wrap:wrap}
+  .err{display:none;color:var(--red);font-size:.86rem;font-weight:600;margin-top:10px}
+  .err.show{display:block}
+  .paybox{width:100%;max-width:420px;background:#fff;border-radius:16px;margin:auto 0;overflow:hidden;box-shadow:0 34px 80px -34px rgba(0,0,0,.65)}
+  .pay-head{background:#011B33;color:#fff;text-align:center;padding:22px}
+  .pay-brand{font-weight:800;color:#fff}.pay-brand b{color:#3BB75E}
+  .pay-head .preview{display:inline-block;margin-left:8px;font-size:.62rem;font-weight:800;letter-spacing:.1em;background:rgba(255,255,255,.16);border-radius:6px;padding:3px 7px}
+  .pay-email{font-size:.82rem;color:rgba(255,255,255,.72);margin-top:10px}
+  .pay-amount{font-family:'Poppins',sans-serif;font-size:1.45rem;font-weight:800;color:#fff}
+  .pay-body{padding:22px}
+  .tabs{display:flex;gap:7px;margin-bottom:8px}
+  .tab{flex:1;padding:10px 6px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:.8rem;font-weight:700;color:var(--body);cursor:pointer}
+  .tab.on{background:var(--sky);border-color:#99D8F4;color:var(--blue-deep)}
+  .pay-button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:999px;background:#3BB75E;color:#fff;font-weight:800;cursor:pointer}
+  .pay-button:hover{background:#309d50}
+  .pay-alt{text-align:center;margin-top:12px}
+  .pay-alt button{border:0;background:none;text-decoration:underline;color:var(--muted);font-size:.82rem;cursor:pointer}
+  .state{text-align:center;padding:42px 26px}
+  .spinner{width:38px;height:38px;border:3px solid #E8EEF3;border-top-color:#3BB75E;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .state b{display:block;color:var(--ink);font-size:1rem;margin:16px 0 6px}
+  .state span{display:block;color:var(--body);font-size:.9rem;max-width:32ch;margin:0 auto}
+  .ok{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:var(--green-soft);color:var(--green);border:1px solid #BFE8CC}
+  .bad{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:var(--red-soft);color:var(--red);border:1px solid #FECDCA}
+</style>
+</head>
+<body>
+<header id="top">
+  <div class="wrap">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="index.html" aria-label="Swim Africa Ghana home"><img src="assets/logo.jpeg" alt="Swim Africa Ghana" /></a>
+      <div class="nav-links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#programs">Programs</a>
+        <a href="index.html#team">Team</a>
+        <a href="news.html">News</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="tel:+233208978958">Call</a>
+        <a class="btn btn-primary" href="#catalog">Buy a program</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <a href="index.html#about">About</a>
+    <a href="index.html#programs">Programs</a>
+    <a href="index.html#team">Team</a>
+    <a href="news.html">News &amp; Events</a>
+    <a href="index.html#contact">Contact</a>
+    <div class="mm-cta">
+      <a class="btn btn-ghost" href="tel:+233208978958">Call</a>
+      <a class="btn btn-primary" href="#catalog">Buy a program</a>
+    </div>
+  </nav>
+</header>
+
+<section class="store-hero" aria-label="Program store">
+  <img src="assets/prog-gaia.jpg" alt="Children learning to swim with Swim Africa Ghana" />
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Program Store</span>
+      <h1>Choose your swim path and register learners.</h1>
+      <p>Pick a level, add one or more learners, and begin checkout for Swim Africa Ghana programs in Accra and Kumasi.</p>
+      <div class="hero-actions">
+        <a class="btn btn-orange" href="#catalog">View programs</a>
+        <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.5)" href="https://wa.me/233208978958?text=Hi%20Swim%20Africa%20Ghana%2C%20I%27d%20like%20help%20choosing%20a%20program." target="_blank" rel="noopener">Ask for help</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main id="catalog">
+  <div class="wrap">
+    <div class="store-head">
+      <div>
+        <span class="eyebrow">Available programs</span>
+        <h2>Start with the right level</h2>
+        <p id="catalogIntro">Loading Swim Africa Ghana programs...</p>
+      </div>
+      <div class="catalog-meta" id="catalogMeta"></div>
+    </div>
+    <div class="notice" id="notice"></div>
+    <div class="programs" id="programs"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="index.html" aria-label="Swim Africa Ghana home"><img src="assets/logo.jpeg" alt="Swim Africa Ghana" /></a>
+    <small>Made with <span class="heart">&hearts;</span> in Ghana - &copy; <span id="yr"></span> Swim Africa Ghana</small>
+  </div>
+</footer>
+
+<div class="scrim" id="regScrim"><div class="panel" id="regPanel"></div></div>
+<div class="scrim" id="learnerScrim"><div class="modal" id="learnerModal"></div></div>
+<div class="scrim" id="payScrim"><div class="paybox" id="payBox"></div></div>
+
+<script>
+  const CONFIG = {
+    marlinBaseUrl: 'https://swimclassmanager.com',
+    organisationSlug: 'swim-africa-ghana',
+    schoolSlug: 'swim-africa-ghana',
+    platformFeeRate: 0.04
+  };
+
+  let catalog = null;
+  let currentLevel = null;
+  let currentProgram = null;
+  let learners = [];
+  let editIdx = null;
+  let currentChannel = 'card';
+
+  const header = document.getElementById('top');
+  const regScrim = document.getElementById('regScrim');
+  const regPanel = document.getElementById('regPanel');
+  const learnerScrim = document.getElementById('learnerScrim');
+  const learnerModal = document.getElementById('learnerModal');
+  const payScrim = document.getElementById('payScrim');
+  const payBox = document.getElementById('payBox');
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive:true });
+
+  (function mobileMenu(){
+    const btn = document.getElementById('hamburger');
+    const menu = document.getElementById('mobileMenu');
+    if (!btn || !menu) return;
+    const open = () => { header.classList.add('menu-open'); btn.setAttribute('aria-expanded','true'); btn.setAttribute('aria-label','Close menu'); document.body.style.overflow='hidden'; };
+    const close = () => { header.classList.remove('menu-open'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','Open menu'); document.body.style.overflow=''; };
+    btn.addEventListener('click', () => header.classList.contains('menu-open') ? close() : open());
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    window.matchMedia('(min-width:901px)').addEventListener('change', e => { if (e.matches) close(); });
+  })();
+
+  function configuredApiBase(){
+    const params = new URLSearchParams(window.location.search);
+    return (params.get('api') || CONFIG.marlinBaseUrl || '').replace(/\/$/, '');
+  }
+
+  function catalogUrl(){
+    const params = new URLSearchParams(window.location.search);
+    const org = params.get('org') || CONFIG.organisationSlug;
+    const school = params.get('school') || CONFIG.schoolSlug;
+    const base = configuredApiBase();
+    return base ? `${base}/api/register/${org}/${school}/plans` : '';
+  }
+
+  async function loadCatalog(){
+    const url = catalogUrl();
+    if (!url) {
+      showCatalogError('Live SwimClassManager catalog is not configured.');
+      return;
+    }
+    try {
+      const response = await fetch(url, { headers:{ Accept:'application/json' } });
+      if (!response.ok) throw new Error(`Catalog request failed: ${response.status}`);
+      catalog = normalizeCatalog(await response.json());
+      renderCatalog();
+    } catch (error) {
+      showCatalogError('Live program levels could not be loaded from SwimClassManager. Please refresh or contact Swim Africa Ghana.');
+      console.error(error);
+    }
+  }
+
+  function showCatalogError(message){
+    const notice = document.getElementById('notice');
+    notice.textContent = message;
+    notice.classList.add('show');
+    document.getElementById('catalogIntro').textContent = 'Program levels are loaded live from SwimClassManager.';
+    document.getElementById('catalogMeta').innerHTML = `<span class="chip">${iconLock()} Live catalog</span>`;
+    document.getElementById('programs').innerHTML = '<div class="empty">No live program levels are available to show.</div>';
+  }
+
+  function normalizeCatalog(input){
+    return {
+      school: input.school || { name: 'Swim Africa Ghana', slug: 'swim-africa-ghana', organisationSlug: 'swim-africa-ghana' },
+      swimYear: input.swimYear || null,
+      programs: (input.programs || []).map(program => ({
+        ...program,
+        image: program.image || programImage(program.name),
+        levels: (program.levels || []).map(level => ({
+          ...level,
+          fee: level.fee || { raw: 0, currency: 'GHS', formatted: 'GHS 0.00' }
+        }))
+      }))
+    };
+  }
+
+  function programImage(name){
+    const slug = slugify(name);
+    if (slug.includes('teacher')) return 'assets/prog-teacher.jpg';
+    if (slug.includes('benefit') || slug.includes('adult')) return 'assets/prog-benefits.jpg';
+    if (slug.includes('shark')) return 'assets/prog-sharks.png';
+    if (slug.includes('school-based')) return 'assets/prog-school.jpg';
+    return 'assets/prog-gaia.jpg';
+  }
+
+  function renderCatalog(){
+    document.getElementById('catalogIntro').textContent = catalog.school?.name
+      ? `Programs currently available from ${catalog.school.name}.`
+      : 'Programs currently available for purchase.';
+    const year = catalog.swimYear;
+    document.getElementById('catalogMeta').innerHTML = `
+      <span class="chip">${iconCalendar()} ${escapeHtml(year?.name || 'Current schedule')}</span>
+      <span class="chip">${iconLock()} Paystack-ready checkout</span>
+    `;
+    const root = document.getElementById('programs');
+    if (!catalog.programs.length) {
+      root.innerHTML = '<div class="empty">No purchasable programs are available right now.</div>';
+      return;
+    }
+    root.innerHTML = catalog.programs.map(program => `
+      <section class="program-block" id="${slugify(program.name)}">
+        <div class="program-title">
+          <div>
+            <span class="eyebrow">${escapeHtml(program.levels.length)} level${program.levels.length === 1 ? '' : 's'}</span>
+            <h3>${escapeHtml(program.name)}</h3>
+          </div>
+          <p>${escapeHtml(program.description || '')}</p>
+        </div>
+        <div class="levels">
+          ${program.levels.map(level => levelCard(program, level)).join('')}
+        </div>
+      </section>
+    `).join('');
+
+    const requested = new URLSearchParams(window.location.search).get('program');
+    if (requested) {
+      const target = document.getElementById(slugify(requested)) || [...document.querySelectorAll('.program-block')].find(el => el.id.includes(slugify(requested)));
+      if (target) setTimeout(() => target.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
+    }
+  }
+
+  function levelCard(program, level){
+    const stageText = Number(level.stageCount || 0) > 0 ? `${level.stageCount} stage${Number(level.stageCount) === 1 ? '' : 's'}` : 'Structured pathway';
+    const capacity = level.capacity ? `${level.capacity} seats` : 'Open enrolment';
+    return `
+      <article class="level">
+        <div class="level-media"><img src="${program.image}" alt="${escapeAttr(program.name)}" loading="lazy" /></div>
+        <div class="level-body">
+          <div class="badges">
+            <span class="badge ok">Available</span>
+            <span class="badge">${escapeHtml(level.ageGroup || level.audience || 'All learners')}</span>
+            <span class="badge code">${escapeHtml(level.code || '')}</span>
+          </div>
+          <h4>${escapeHtml(level.name)}</h4>
+          <p>${escapeHtml(level.description || program.description || '')}</p>
+          <div class="facts">
+            <div class="fact">${iconBook()} <span><b>${escapeHtml(level.lessonsToComplete || '-')}</b> lessons</span></div>
+            <div class="fact">${iconLayers()} <span>${escapeHtml(stageText)}</span></div>
+            <div class="fact">${iconUsers()} <span>${escapeHtml(capacity)}</span></div>
+          </div>
+          <div class="price">
+            <div><b>${money(level.fee.raw)}</b><br><span>per learner</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openRegistration('${escapeAttr(program.publicId)}','${escapeAttr(level.publicId)}')">Register</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function openRegistration(programId, levelId){
+    currentProgram = catalog.programs.find(program => program.publicId === programId);
+    currentLevel = currentProgram.levels.find(level => level.publicId === levelId);
+    learners = [];
+    regPanel.innerHTML = registrationMarkup();
+    regScrim.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    renderLearners();
+    refreshSummary();
+  }
+
+  function closeRegistration(){
+    regScrim.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  regScrim.addEventListener('click', e => { if (e.target === regScrim) closeRegistration(); });
+
+  function registrationMarkup(){
+    return `
+      <div class="panel-head">
+        <div><h2>Register - ${escapeHtml(currentLevel.name)}</h2><p>${escapeHtml(currentProgram.name)} - ${escapeHtml(currentLevel.code || '')}</p></div>
+        <button class="icon-btn" onclick="closeRegistration()" aria-label="Close">${iconX()}</button>
+      </div>
+      <div class="reg-grid">
+        <div class="reg-main">
+          <div class="block">
+            <h3>Your details</h3>
+            <div class="hint">Confirmation and follow-up will use these contacts.</div>
+            <div class="fieldrow">
+              <div><label class="f">First name</label><input class="inp" id="rFirst" placeholder="Jane" oninput="refreshSummary()"></div>
+              <div><label class="f">Last name</label><input class="inp" id="rLast" placeholder="Doe" oninput="refreshSummary()"></div>
+            </div>
+            <label class="f">Email</label><input class="inp" id="rEmail" type="email" placeholder="name@example.com" oninput="refreshSummary()">
+            <div class="fieldrow">
+              <div><label class="f">Phone</label><input class="inp" id="rPhone" type="tel" placeholder="+233 20 000 0000" oninput="refreshSummary()"></div>
+              <div><label class="f">WhatsApp number <small>optional</small></label><input class="inp" id="rWa" type="tel" placeholder="+233 20 000 0000"></div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="learner-head"><h3>Learners</h3><button class="btn btn-light btn-sm" onclick="openLearner()">${iconPlus()} Add learner</button></div>
+            <div id="learnerList"></div>
+          </div>
+          <div class="block">
+            <h3>Message <small style="font-weight:500;color:var(--muted);font-size:.86rem">optional</small></h3>
+            <textarea class="inp" id="rMsg" placeholder="Share goals, scheduling notes, or anything the school should know." style="margin-top:8px"></textarea>
+          </div>
+        </div>
+        <aside class="reg-side">
+          <div class="summary">
+            <h3>${escapeHtml(currentLevel.name)}</h3>
+            <div class="muted">${escapeHtml(currentLevel.code || '')} - ${escapeHtml(currentLevel.lessonsToComplete || '-')} lessons</div>
+            <div id="sumLines"></div>
+            <button class="btn btn-primary btn-block" id="payBtn" style="margin-top:16px;padding:14px" disabled onclick="openPayment()">Pay</button>
+            <div class="secure">${iconLock()} Secured by <b>Paystack</b></div>
+            <div class="sum-note" id="sumNote"></div>
+          </div>
+        </aside>
+      </div>
+    `;
+  }
+
+  function openLearner(index){
+    const editing = typeof index === 'number';
+    editIdx = editing ? index : null;
+    const learner = editing ? learners[index] : { first:'', last:'', dob:'', gender:'Male', nationality:'', location:'', school:'', medical:'', experience:'' };
+    const genders = ['Male','Female','Other','Prefer not to say'].map(g => `<option ${g === learner.gender ? 'selected' : ''}>${g}</option>`).join('');
+    learnerModal.innerHTML = `
+      <div class="modal-head"><h3>${editing ? 'Edit learner' : 'Add learner'}</h3><button class="icon-btn" onclick="closeLearner()" aria-label="Close">${iconX()}</button></div>
+      <div class="fieldrow">
+        <div><label class="f">First name</label><input class="inp" id="lFirst" value="${escapeAttr(learner.first)}"></div>
+        <div><label class="f">Last name</label><input class="inp" id="lLast" value="${escapeAttr(learner.last)}"></div>
+      </div>
+      <div class="fieldrow">
+        <div><label class="f">Date of birth</label><input class="inp" id="lDob" type="date" value="${escapeAttr(learner.dob)}"></div>
+        <div><label class="f">Gender</label><select class="inp" id="lGender">${genders}</select></div>
+      </div>
+      <div class="fieldrow">
+        <div><label class="f">Nationality</label><input class="inp" id="lNat" value="${escapeAttr(learner.nationality)}"></div>
+        <div><label class="f">Residential location</label><input class="inp" id="lLoc" value="${escapeAttr(learner.location)}"></div>
+      </div>
+      <label class="f">School or institution</label><input class="inp" id="lSchool" value="${escapeAttr(learner.school)}">
+      <label class="f">Medical information</label><div class="hint" style="margin-bottom:6px">Enter "None" if there is nothing to report.</div><textarea class="inp" id="lMed">${escapeHtml(learner.medical)}</textarea>
+      <label class="f">Swimming experience <small>optional</small></label><textarea class="inp" id="lExp">${escapeHtml(learner.experience)}</textarea>
+      <div class="err" id="lErr">Please fill in every field except swimming experience.</div>
+      <div class="modal-foot"><button class="btn btn-light" onclick="closeLearner()">Cancel</button><button class="btn btn-primary" onclick="saveLearner()">${editing ? 'Save changes' : 'Add learner'}</button></div>
+    `;
+    learnerScrim.classList.add('open');
+  }
+
+  function closeLearner(){
+    learnerScrim.classList.remove('open');
+    editIdx = null;
+  }
+  learnerScrim.addEventListener('click', e => { if (e.target === learnerScrim) closeLearner(); });
+
+  function saveLearner(){
+    const required = {
+      first: value('lFirst'),
+      last: value('lLast'),
+      dob: value('lDob'),
+      nationality: value('lNat'),
+      location: value('lLoc'),
+      school: value('lSchool'),
+      medical: value('lMed')
+    };
+    if (Object.values(required).some(v => !v)) {
+      document.getElementById('lErr').classList.add('show');
+      return;
+    }
+    const next = { ...required, gender:value('lGender'), experience:value('lExp') };
+    if (editIdx === null) learners.push(next);
+    else learners[editIdx] = next;
+    closeLearner();
+    renderLearners();
+    refreshSummary();
+  }
+
+  function renderLearners(){
+    const list = document.getElementById('learnerList');
+    if (!list) return;
+    if (!learners.length) {
+      list.innerHTML = '<div class="learner-empty">Add at least one learner to continue.</div>';
+      return;
+    }
+    list.innerHTML = learners.map((learner, index) => `
+      <div class="learner">
+        <span class="avatar">${initials(`${learner.first} ${learner.last}`)}</span>
+        <div class="learner-meta"><b>${escapeHtml(learner.first)} ${escapeHtml(learner.last)}</b><span>${escapeHtml(learner.gender)}${learner.dob ? ' - ' + age(learner.dob) + ' yrs' : ''}${learner.school ? ' - ' + escapeHtml(learner.school) : ''}</span></div>
+        <div class="learner-actions">
+          <button class="small-icon" onclick="openLearner(${index})" aria-label="Edit learner">${iconEdit()}</button>
+          <button class="small-icon remove" onclick="removeLearner(${index})" aria-label="Remove learner">${iconTrash()}</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function removeLearner(index){
+    learners.splice(index, 1);
+    renderLearners();
+    refreshSummary();
+  }
+
+  function refreshSummary(){
+    if (!currentLevel) return;
+    const count = learners.length;
+    const subtotal = currentLevel.fee.raw * count;
+    const fee = Math.round(subtotal * CONFIG.platformFeeRate);
+    const schoolReceives = subtotal - fee;
+    document.getElementById('sumLines').innerHTML = `
+      <div class="sum-line"><span>${escapeHtml(currentLevel.name)}</span><span>${money(currentLevel.fee.raw)}</span></div>
+      <div class="sum-line"><span>Learners</span><span>x ${count}</span></div>
+      <div class="sum-line total"><span>Total due today</span><span>${money(subtotal)}</span></div>
+    `;
+    document.getElementById('sumNote').textContent = count
+      ? `${catalog.school.name} receives ${money(schoolReceives)}. Platform fee: ${money(fee)}.`
+      : 'Add a learner to see the checkout total.';
+    const ok = value('rFirst') && value('rLast') && value('rEmail') && value('rPhone') && count > 0;
+    const btn = document.getElementById('payBtn');
+    btn.disabled = !ok;
+    btn.textContent = count ? `Pay ${money(subtotal)}` : 'Pay';
+  }
+
+  function openPayment(channel){
+    currentChannel = channel || currentChannel || 'card';
+    const amount = currentLevel.fee.raw * learners.length;
+    const email = value('rEmail') || 'you@example.com';
+    payBox.innerHTML = paymentMarkup(email, amount, currentChannel);
+    payScrim.classList.add('open');
+  }
+
+  function closePayment(){ payScrim.classList.remove('open'); }
+  payScrim.addEventListener('click', e => { if (e.target === payScrim) closePayment(); });
+
+  function paymentMarkup(email, amount, channel){
+    const body = channel === 'card'
+      ? '<label class="f">Card number</label><input class="inp" value="4084 0840 8408 4081"><div class="fieldrow"><div><label class="f">Expiry</label><input class="inp" value="09 / 28"></div><div><label class="f">CVV</label><input class="inp" value="408"></div></div>'
+      : channel === 'momo'
+        ? '<label class="f">Mobile Money number</label><input class="inp" placeholder="024 000 0000"><label class="f">Network</label><select class="inp"><option>MTN</option><option>Telecel</option><option>AirtelTigo</option></select>'
+        : '<div class="notice show" style="margin:12px 0">You will be redirected to your bank secure page to authorize the transfer.</div>';
+    return `
+      <div class="pay-head">
+        <div><span class="pay-brand">pay<b>stack</b></span><span class="preview">PREVIEW</span></div>
+        <div class="pay-email">${escapeHtml(email)}</div>
+        <div class="pay-amount">${money(amount)}</div>
+      </div>
+      <div class="pay-body">
+        <div class="tabs">
+          <button class="tab ${channel === 'card' ? 'on' : ''}" onclick="openPayment('card')">Card</button>
+          <button class="tab ${channel === 'momo' ? 'on' : ''}" onclick="openPayment('momo')">Mobile Money</button>
+          <button class="tab ${channel === 'bank' ? 'on' : ''}" onclick="openPayment('bank')">Bank</button>
+        </div>
+        ${body}
+        <button class="pay-button" onclick="processPayment(true)">Pay ${money(amount)}</button>
+        <div class="pay-alt"><button onclick="processPayment(false)">Simulate a declined payment</button></div>
+        <div class="secure" style="margin-top:14px">${iconLock()} Preview checkout - no live charge is made.</div>
+      </div>
+    `;
+  }
+
+  function processPayment(ok){
+    const amount = currentLevel.fee.raw * learners.length;
+    payBox.innerHTML = `<div class="state"><div class="spinner"></div><b>Authorizing payment</b><span>Confirming your ${money(amount)} checkout preview.</span></div>`;
+    setTimeout(() => ok ? showSuccess() : showDeclined(amount), 900);
+  }
+
+  function showDeclined(amount){
+    payBox.innerHTML = `<div class="state"><div class="bad">${iconX()}</div><b>Payment failed</b><span>Your ${money(amount)} payment could not be completed. No money has left your account.</span><button class="pay-button" onclick="openPayment('card')">Try again</button><button class="btn btn-light btn-block" style="margin-top:10px" onclick="closePayment()">Back to registration</button></div>`;
+  }
+
+  function showSuccess(){
+    closePayment();
+    const count = learners.length;
+    const total = currentLevel.fee.raw * count;
+    regPanel.innerHTML = `
+      <div class="panel-head"><div><h2>Registration complete</h2><p>Reference SAG-${Math.random().toString(16).slice(2,8).toUpperCase()}</p></div><button class="icon-btn" onclick="closeRegistration()" aria-label="Close">${iconX()}</button></div>
+      <div class="state" style="background:#fff"><div class="ok">${iconCheck()}</div><h2>${escapeHtml(currentLevel.name)} registration received</h2><span>${count} learner${count === 1 ? '' : 's'} registered for ${money(total)}. Swim Africa Ghana will follow up with confirmation and class details.</span><button class="btn btn-primary" style="margin-top:24px" onclick="closeRegistration()">Done</button></div>
+    `;
+  }
+
+  function value(id){ const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function money(raw){ return 'GHS ' + ((Number(raw) || 0) / 100).toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+  function slugify(value){ return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  function initials(value){ return String(value || '').trim().split(/\s+/).slice(0,2).map(v => v[0] || '').join('').toUpperCase(); }
+  function age(dob){
+    const born = new Date(dob);
+    if (Number.isNaN(born.getTime())) return '';
+    const today = new Date();
+    let years = today.getFullYear() - born.getFullYear();
+    const passed = today.getMonth() > born.getMonth() || (today.getMonth() === born.getMonth() && today.getDate() >= born.getDate());
+    if (!passed) years -= 1;
+    return years;
+  }
+  function escapeHtml(value){ return String(value == null ? '' : value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escapeAttr(value){ return escapeHtml(value).replace(/"/g,'&quot;'); }
+  function iconCalendar(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg>'; }
+  function iconLock(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
+  function iconBook(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v18H6a2 2 0 0 1-2-1.5Z"/><path d="M8 7h8"/></svg>'; }
+  function iconLayers(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>'; }
+  function iconUsers(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3.5 2-4.5"/></svg>'; }
+  function iconPlus(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>'; }
+  function iconEdit(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
+  function iconTrash(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>'; }
+  function iconX(){ return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>'; }
+  function iconCheck(){ return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg>'; }
+
+  loadCatalog();
+</script>
+</body>
+</html>
