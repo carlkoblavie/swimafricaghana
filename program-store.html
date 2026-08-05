@@ -380,6 +380,36 @@
     return 'assets/prog-gaia.jpg';
   }
 
+  function levelFilterSlugs(){
+    const raw = new URLSearchParams(window.location.search).get('level');
+    if (!raw) return [];
+    return raw.split(',').map(v => slugify(v)).filter(Boolean);
+  }
+  function levelMatchesFilter(level, slugs){
+    if (!slugs.length) return true;
+    const candidates = [slugify(cleanLevelName(level.name)), slugify(level.name), slugify(level.publicId)].filter(Boolean);
+    return slugs.some(s => candidates.some(c => c === s || c.includes(s)));
+  }
+  function applyLevelFilter(programs, slugs){
+    if (!slugs.length) return programs;
+    return programs
+      .map(program => ({ ...program, levels: program.levels.filter(level => levelMatchesFilter(level, slugs)) }))
+      .filter(program => program.levels.length);
+  }
+  function urlWithoutLevel(){
+    const params = new URLSearchParams(window.location.search);
+    params.delete('level');
+    const qs = params.toString();
+    return qs ? `?${qs}` : window.location.pathname;
+  }
+  function applyFilterChrome(filterSlugs, visiblePrograms){
+    if (!filterSlugs.length) return;
+    const names = [...new Set(visiblePrograms.flatMap(p => p.levels.map(l => cleanLevelName(l.name))))];
+    document.getElementById('catalogIntro').innerHTML = names.length
+      ? `Showing ${names.map(n => `<b>${escapeHtml(n)}</b>`).join(', ')} only.`
+      : 'No matching level found for this link.';
+    document.getElementById('catalogMeta').insertAdjacentHTML('beforeend', ` <a class="chip" href="${escapeAttr(urlWithoutLevel())}" style="text-decoration:none">&#10005; Show all programs</a>`);
+  }
   function renderCatalog(){
     document.getElementById('catalogIntro').innerHTML = catalog.school?.name
       ? `Programs currently available from ${noBreakName(catalog.school.name)}.`
@@ -389,12 +419,17 @@
       <span class="chip">${iconCalendar()} ${escapeHtml(year?.name || 'Current schedule')}</span>
       <span class="chip">${iconCheck()} Secure checkout</span>
     `;
+    const filterSlugs = levelFilterSlugs();
+    const visiblePrograms = applyLevelFilter(catalog.programs, filterSlugs);
+    applyFilterChrome(filterSlugs, visiblePrograms);
     const root = document.getElementById('programs');
-    if (!catalog.programs.length) {
-      root.innerHTML = '<div class="empty">No purchasable programs are available right now.</div>';
+    if (!visiblePrograms.length) {
+      root.innerHTML = filterSlugs.length
+        ? `<div class="empty">No program matches this level. <a href="${escapeAttr(urlWithoutLevel())}">Show all programs</a>.</div>`
+        : '<div class="empty">No purchasable programs are available right now.</div>';
       return;
     }
-    root.innerHTML = catalog.programs.map(program => `
+    root.innerHTML = visiblePrograms.map(program => `
       <section class="program-block" id="${slugify(program.name)}">
         <div class="program-title">
           <div>
