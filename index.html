@@ -900,10 +900,9 @@
     const status=document.getElementById('tryoutStatus');
     const submit=document.getElementById('tryoutSubmit');
     const params=new URLSearchParams(window.location.search);
-    const isLocalPage=['localhost','127.0.0.1',''].includes(window.location.hostname)||window.location.protocol==='file:';
-    const defaultBase=isLocalPage?'http://localhost:3333':CONFIG.marlinBaseUrl;
-    const defaultOrg=isLocalPage?'swim-with-carl':CONFIG.organisationSlug;
-    const defaultSchool=isLocalPage?'swim-with-carl':CONFIG.schoolSlug;
+    const defaultBase=CONFIG.marlinBaseUrl;
+    const defaultOrg=CONFIG.organisationSlug;
+    const defaultSchool=CONFIG.schoolSlug;
     const base=(params.get('api')||defaultBase).replace(/\/$/,'');
     const org=params.get('org')||defaultOrg;
     const school=params.get('school')||defaultSchool;

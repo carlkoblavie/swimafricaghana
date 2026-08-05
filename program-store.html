@@ -311,25 +311,21 @@
 
   function configuredApiBase(){
     const params = new URLSearchParams(window.location.search);
-    const isLocalPage = ['localhost','127.0.0.1',''].includes(window.location.hostname) || window.location.protocol === 'file:';
-    const defaultBase = isLocalPage ? 'http://localhost:3333' : CONFIG.marlinBaseUrl;
-    return (params.get('api') || defaultBase || '').replace(/\/$/, '');
+    return (params.get('api') || CONFIG.marlinBaseUrl || '').replace(/\/$/, '');
   }
 
   function catalogUrl(){
     const params = new URLSearchParams(window.location.search);
-    const isLocalPage = ['localhost','127.0.0.1',''].includes(window.location.hostname) || window.location.protocol === 'file:';
-    const org = params.get('org') || (isLocalPage ? 'swim-with-carl' : CONFIG.organisationSlug);
-    const school = params.get('school') || (isLocalPage ? 'swim-with-carl' : CONFIG.schoolSlug);
+    const org = params.get('org') || CONFIG.organisationSlug;
+    const school = params.get('school') || CONFIG.schoolSlug;
     const base = configuredApiBase();
     return base ? `${base}/api/register/${org}/${school}/plans` : '';
   }
 
   function purchaseUrl(){
     const params = new URLSearchParams(window.location.search);
-    const isLocalPage = ['localhost','127.0.0.1',''].includes(window.location.hostname) || window.location.protocol === 'file:';
-    const org = params.get('org') || (isLocalPage ? 'swim-with-carl' : CONFIG.organisationSlug);
-    const school = params.get('school') || (isLocalPage ? 'swim-with-carl' : CONFIG.schoolSlug);
+    const org = params.get('org') || CONFIG.organisationSlug;
+    const school = params.get('school') || CONFIG.schoolSlug;
     const base = configuredApiBase();
     return base ? `${base}/api/register/${org}/${school}/purchases` : '';
   }
@@ -440,7 +436,9 @@
             <div class="fact">${iconUsers()} <span>${escapeHtml(capacity)}</span></div>
           </div>
           <div class="price">
-            <div><b>${money(level.fee.raw)}</b><br><span>per learner / term</span></div>
+            <div><b>${money(level.fee.raw)}</b><br>
+            <span>per learner</span>
+            </div>
             ${canPurchase ? `<button class="btn btn-primary btn-sm" onclick="openRegistration(${escapeAttr(JSON.stringify(program.publicId))},${escapeAttr(JSON.stringify(level.publicId))})">Purchase</button>` : ''}
           </div>
         </div>
