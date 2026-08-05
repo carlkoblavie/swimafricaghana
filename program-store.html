@@ -390,10 +390,17 @@
     const candidates = [slugify(cleanLevelName(level.name)), slugify(level.name), slugify(level.publicId)].filter(Boolean);
     return slugs.some(s => candidates.some(c => c === s || c.includes(s)));
   }
+  function programMatchesFilter(program, slugs){
+    if (!slugs.length) return false;
+    const candidates = [slugify(program.name), slugify(program.publicId)].filter(Boolean);
+    return slugs.some(s => candidates.some(c => c === s || c.includes(s)));
+  }
   function applyLevelFilter(programs, slugs){
     if (!slugs.length) return programs;
     return programs
-      .map(program => ({ ...program, levels: program.levels.filter(level => levelMatchesFilter(level, slugs)) }))
+      .map(program => programMatchesFilter(program, slugs)
+        ? program
+        : ({ ...program, levels: program.levels.filter(level => levelMatchesFilter(level, slugs)) }))
       .filter(program => program.levels.length);
   }
   function urlWithoutLevel(){
