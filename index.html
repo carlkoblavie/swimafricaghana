@@ -286,6 +286,28 @@
     background:#fff;border:1px solid var(--line);transition:border-color .2s}
   .ph-row a:hover{border-color:var(--blue)}
   .ph-row a svg{color:var(--blue-deep)}
+  .tryout-form{display:grid;gap:12px}
+  .tryout-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:520px){.tryout-row{grid-template-columns:1fr}}
+  .tryout-form label{display:block;font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:5px}
+  .tryout-form input,.tryout-form textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:12px 14px;font:inherit}
+  .tryout-form textarea{min-height:96px;resize:vertical}
+  .tryout-form .btn{width:100%;justify-content:center}
+  .tryout-form input:focus,.tryout-form textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(18,165,232,.16)}
+  .tryout-status{display:none;border-radius:12px;padding:12px 14px;font-size:.9rem;font-weight:600}
+  .tryout-status.show{display:block}
+  .tryout-status.ok{background:#E9F8EF;color:#178F4B;border:1px solid #BFE8CC}
+  .tryout-status.err{background:#FEF3F2;color:#B42318;border:1px solid #FECDCA}
+  .tryout-modal{position:fixed;inset:0;margin:auto;width:min(94vw,640px);max-height:min(90vh,760px);overflow:auto;border:0;border-radius:20px;padding:0;background:#fff;box-shadow:0 28px 80px rgba(10,52,80,.24)}
+  .tryout-modal::backdrop{background:rgba(10,52,80,.48);backdrop-filter:blur(4px)}
+  .tryout-modal[open]{animation:modalIn .18s ease-out}
+  .tryout-box{padding:28px}
+  .tryout-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .tryout-head h3{font-size:1.32rem;font-weight:700;margin:0 0 6px}
+  .tryout-head .note{color:var(--muted);margin:0}
+  .tryout-close{width:40px;height:40px;border:1px solid var(--line);border-radius:12px;background:var(--sky-2);color:var(--ink);font-size:1.35rem;line-height:1;cursor:pointer}
+  .tryout-close:hover{border-color:var(--blue)}
+  @keyframes modalIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
   .loc{display:flex;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
   .loc:first-of-type{border-top:0;padding-top:0}
   .loc svg{flex:none;color:var(--orange)}
@@ -543,7 +565,7 @@
               <h3>African Sharks Swim Team</h3><span class="who">Competitive · The next rung</span>
               <p>Our competitive program for any swimmer ready to take on competition — building life skills that stay with children for good.</p>
               <ul><li><b>Age-group</b> — developing young competitors</li><li><b>Masters</b> — competitive swimming for adults</li></ul>
-              <div class="prog-cta"><a class="btn btn-orange" href="#contact">Try out for the team</a></div>
+              <div class="prog-cta"><button class="btn btn-orange" type="button" data-open-tryout>Try out for the team</button></div>
             </div>
             <figure><img src="assets/prog-sharks.png" alt="African Sharks Swim Team celebrating" loading="lazy" /></figure>
           </article>
@@ -730,7 +752,39 @@
   </div>
 </footer>
 
+<dialog class="tryout-modal" id="tryoutModal" aria-labelledby="tryoutTitle">
+  <div class="tryout-box">
+    <div class="tryout-head">
+      <div>
+        <h3 id="tryoutTitle">Try out with us</h3>
+        <p class="note">Send your details and the team will follow up about the next African Sharks tryout.</p>
+      </div>
+      <button class="tryout-close" type="button" data-close-tryout aria-label="Close tryout form">&times;</button>
+    </div>
+    <form class="tryout-form" id="tryoutForm">
+      <div class="tryout-row">
+        <div><label for="tryFirst">First name</label><input id="tryFirst" name="firstName" autocomplete="given-name" required></div>
+        <div><label for="tryLast">Last name</label><input id="tryLast" name="lastName" autocomplete="family-name" required></div>
+      </div>
+      <div><label for="tryEmail">Email</label><input id="tryEmail" name="email" type="email" autocomplete="email" required></div>
+      <div class="tryout-row">
+        <div><label for="tryPhone">Phone</label><input id="tryPhone" name="phone" type="tel" autocomplete="tel" placeholder="+233 20 000 0000" required></div>
+        <div><label for="tryWhatsapp">WhatsApp number</label><input id="tryWhatsapp" name="whatsapp" type="tel" autocomplete="tel" placeholder="+233 20 000 0000" required></div>
+      </div>
+      <div><label for="tryMessage">Message</label><textarea id="tryMessage" name="message" placeholder="Tell us the swimmer's age, current level, or preferred location."></textarea></div>
+      <div class="tryout-status" id="tryoutStatus"></div>
+      <button class="btn btn-orange" type="submit" id="tryoutSubmit">Submit details</button>
+    </form>
+  </div>
+</dialog>
+
 <script>
+  const CONFIG={
+    marlinBaseUrl:'https://swimclassmanager.com',
+    organisationSlug:'swim-africa-ghana',
+    schoolSlug:'swim-africa-ghana'
+  };
+
   const header=document.getElementById('top');
   const onScroll=()=>header.classList.toggle('scrolled',window.scrollY>8);
   onScroll();window.addEventListener('scroll',onScroll,{passive:true});
@@ -835,6 +889,85 @@
   /* ---- reveal on scroll ---- */
   const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* ---- Tryout form ---- */
+  (function(){
+    const form=document.getElementById('tryoutForm');
+    if(!form)return;
+    const modal=document.getElementById('tryoutModal');
+    const openers=[...document.querySelectorAll('[data-open-tryout]')];
+    const closers=[...document.querySelectorAll('[data-close-tryout]')];
+    const status=document.getElementById('tryoutStatus');
+    const submit=document.getElementById('tryoutSubmit');
+    const params=new URLSearchParams(window.location.search);
+    const isLocalPage=['localhost','127.0.0.1',''].includes(window.location.hostname)||window.location.protocol==='file:';
+    const defaultBase=isLocalPage?'http://localhost:3333':CONFIG.marlinBaseUrl;
+    const defaultOrg=isLocalPage?'swim-with-carl':CONFIG.organisationSlug;
+    const defaultSchool=isLocalPage?'swim-with-carl':CONFIG.schoolSlug;
+    const base=(params.get('api')||defaultBase).replace(/\/$/,'');
+    const org=params.get('org')||defaultOrg;
+    const school=params.get('school')||defaultSchool;
+    const endpoint=`${base}/api/register/${org}/${school}/purchases`;
+    const value=id=>document.getElementById(id).value.trim();
+    const setStatus=(type,message)=>{
+      status.className=`tryout-status show ${type}`;
+      status.textContent=message;
+    };
+    const openModal=()=>{
+      if(modal?.showModal){
+        modal.showModal();
+      }else{
+        window.location.hash='tryout';
+      }
+    };
+    const closeModal=()=>modal?.close();
+
+    openers.forEach(button=>button.addEventListener('click',openModal));
+    closers.forEach(button=>button.addEventListener('click',closeModal));
+    modal?.addEventListener('click',event=>{
+      if(event.target===modal)closeModal();
+    });
+
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      submit.disabled=true;
+      submit.textContent='Submitting...';
+      status.className='tryout-status';
+      status.textContent='';
+
+      const extra=value('tryMessage');
+      const message=[
+        'Tryout request: African Sharks Swim Team',
+        extra
+      ].filter(Boolean).join('\n\n');
+
+      try{
+        const response=await fetch(endpoint,{
+          method:'POST',
+          headers:{Accept:'application/json','Content-Type':'application/json'},
+          body:JSON.stringify({
+            intent:'tryout',
+            contactName:`${value('tryFirst')} ${value('tryLast')}`.trim(),
+            contactEmail:value('tryEmail'),
+            contactPhone:value('tryPhone'),
+            whatsapp:value('tryWhatsapp'),
+            message
+          })
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok){
+          throw new Error(data?.errors?.[0]?.message||data?.message||`Could not submit details (${response.status}).`);
+        }
+        form.reset();
+        setStatus('ok','Thanks. Your tryout details have been sent to Swim Africa Ghana.');
+      }catch(error){
+        setStatus('err',error.message||'Could not submit details. Please try again.');
+      }finally{
+        submit.disabled=false;
+        submit.textContent='Submit details';
+      }
+    });
+  })();
 </script>
 </body>
 </html>

@@ -130,9 +130,10 @@
   .facts{display:grid;gap:8px;margin-top:auto}
   .fact{display:flex;align-items:center;gap:9px;font-size:.91rem;color:var(--muted)}
   .fact svg{color:var(--orange);flex:none}
-  .price{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-top:4px;border-top:1px dashed var(--line)}
+  .price{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding-top:4px;border-top:1px dashed var(--line)}
   .price b{font-family:'Poppins',sans-serif;font-size:1.35rem;color:var(--ink);line-height:1}
   .price span{font-size:.78rem;color:var(--muted)}
+  .price .btn{width:100%}
 
   .empty{background:#fff;border:1px dashed var(--line);border-radius:16px;padding:28px;color:var(--muted)}
 
@@ -188,20 +189,6 @@
   .modal-foot{display:flex;justify-content:flex-end;gap:12px;margin-top:22px;flex-wrap:wrap}
   .err{display:none;color:var(--red);font-size:.86rem;font-weight:600;margin-top:10px}
   .err.show{display:block}
-  .paybox{width:100%;max-width:420px;background:#fff;border-radius:16px;margin:auto 0;overflow:hidden;box-shadow:0 34px 80px -34px rgba(0,0,0,.65)}
-  .pay-head{background:#011B33;color:#fff;text-align:center;padding:22px}
-  .pay-brand{font-weight:800;color:#fff}.pay-brand b{color:#3BB75E}
-  .pay-head .preview{display:inline-block;margin-left:8px;font-size:.62rem;font-weight:800;letter-spacing:.1em;background:rgba(255,255,255,.16);border-radius:6px;padding:3px 7px}
-  .pay-email{font-size:.82rem;color:rgba(255,255,255,.72);margin-top:10px}
-  .pay-amount{font-family:'Poppins',sans-serif;font-size:1.45rem;font-weight:800;color:#fff}
-  .pay-body{padding:22px}
-  .tabs{display:flex;gap:7px;margin-bottom:8px}
-  .tab{flex:1;padding:10px 6px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:.8rem;font-weight:700;color:var(--body);cursor:pointer}
-  .tab.on{background:var(--sky);border-color:#99D8F4;color:var(--blue-deep)}
-  .pay-button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:999px;background:#3BB75E;color:#fff;font-weight:800;cursor:pointer}
-  .pay-button:hover{background:#309d50}
-  .pay-alt{text-align:center;margin-top:12px}
-  .pay-alt button{border:0;background:none;text-decoration:underline;color:var(--muted);font-size:.82rem;cursor:pointer}
   .state{text-align:center;padding:42px 26px}
   .spinner{width:38px;height:38px;border:3px solid #E8EEF3;border-top-color:#3BB75E;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -251,7 +238,7 @@
     <div class="hero-copy">
       <span class="eyebrow">Program Store</span>
       <h1>Choose your swim path and register learners.</h1>
-      <p>Pick a level, add one or more learners, and begin checkout for Swim Africa Ghana programs in Accra and Kumasi.</p>
+      <p>Pick a level, add one or more learners, and submit registration details for Swim&nbsp;Africa&nbsp;Ghana programs in Accra and Kumasi.</p>
       <div class="hero-actions">
         <a class="btn btn-orange" href="#catalog">View programs</a>
         <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.5)" href="https://wa.me/233208978958?text=Hi%20Swim%20Africa%20Ghana%2C%20I%27d%20like%20help%20choosing%20a%20program." target="_blank" rel="noopener">Ask for help</a>
@@ -266,7 +253,7 @@
       <div>
         <span class="eyebrow">Available programs</span>
         <h2>Start with the right level</h2>
-        <p id="catalogIntro">Loading Swim Africa Ghana programs...</p>
+        <p id="catalogIntro">Loading Swim&nbsp;Africa&nbsp;Ghana programs...</p>
       </div>
       <div class="catalog-meta" id="catalogMeta"></div>
     </div>
@@ -278,13 +265,12 @@
 <footer>
   <div class="wrap foot">
     <a class="brand" href="index.html" aria-label="Swim Africa Ghana home"><img src="assets/logo.jpeg" alt="Swim Africa Ghana" /></a>
-    <small>Made with <span class="heart">&hearts;</span> in Ghana - &copy; <span id="yr"></span> Swim Africa Ghana</small>
+    <small>Made with <span class="heart">&hearts;</span> in Ghana - &copy; <span id="yr"></span> Swim&nbsp;Africa&nbsp;Ghana</small>
   </div>
 </footer>
 
 <div class="scrim" id="regScrim"><div class="panel" id="regPanel"></div></div>
 <div class="scrim" id="learnerScrim"><div class="modal" id="learnerModal"></div></div>
-<div class="scrim" id="payScrim"><div class="paybox" id="payBox"></div></div>
 
 <script>
   const CONFIG = {
@@ -299,15 +285,12 @@
   let currentProgram = null;
   let learners = [];
   let editIdx = null;
-  let currentChannel = 'card';
 
   const header = document.getElementById('top');
   const regScrim = document.getElementById('regScrim');
   const regPanel = document.getElementById('regPanel');
   const learnerScrim = document.getElementById('learnerScrim');
   const learnerModal = document.getElementById('learnerModal');
-  const payScrim = document.getElementById('payScrim');
-  const payBox = document.getElementById('payBox');
 
   document.getElementById('yr').textContent = new Date().getFullYear();
   const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
@@ -328,15 +311,27 @@
 
   function configuredApiBase(){
     const params = new URLSearchParams(window.location.search);
-    return (params.get('api') || CONFIG.marlinBaseUrl || '').replace(/\/$/, '');
+    const isLocalPage = ['localhost','127.0.0.1',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+    const defaultBase = isLocalPage ? 'http://localhost:3333' : CONFIG.marlinBaseUrl;
+    return (params.get('api') || defaultBase || '').replace(/\/$/, '');
   }
 
   function catalogUrl(){
     const params = new URLSearchParams(window.location.search);
-    const org = params.get('org') || CONFIG.organisationSlug;
-    const school = params.get('school') || CONFIG.schoolSlug;
+    const isLocalPage = ['localhost','127.0.0.1',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+    const org = params.get('org') || (isLocalPage ? 'swim-with-carl' : CONFIG.organisationSlug);
+    const school = params.get('school') || (isLocalPage ? 'swim-with-carl' : CONFIG.schoolSlug);
     const base = configuredApiBase();
     return base ? `${base}/api/register/${org}/${school}/plans` : '';
+  }
+
+  function purchaseUrl(){
+    const params = new URLSearchParams(window.location.search);
+    const isLocalPage = ['localhost','127.0.0.1',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+    const org = params.get('org') || (isLocalPage ? 'swim-with-carl' : CONFIG.organisationSlug);
+    const school = params.get('school') || (isLocalPage ? 'swim-with-carl' : CONFIG.schoolSlug);
+    const base = configuredApiBase();
+    return base ? `${base}/api/register/${org}/${school}/purchases` : '';
   }
 
   async function loadCatalog(){
@@ -358,7 +353,7 @@
 
   function showCatalogError(message){
     const notice = document.getElementById('notice');
-    notice.textContent = message;
+    notice.textContent = noBreakPlain(message);
     notice.classList.add('show');
     document.getElementById('catalogIntro').textContent = 'Program levels are loaded live from SwimClassManager.';
     document.getElementById('catalogMeta').innerHTML = `<span class="chip">${iconLock()} Live catalog</span>`;
@@ -390,13 +385,13 @@
   }
 
   function renderCatalog(){
-    document.getElementById('catalogIntro').textContent = catalog.school?.name
-      ? `Programs currently available from ${catalog.school.name}.`
+    document.getElementById('catalogIntro').innerHTML = catalog.school?.name
+      ? `Programs currently available from ${noBreakName(catalog.school.name)}.`
       : 'Programs currently available for purchase.';
     const year = catalog.swimYear;
     document.getElementById('catalogMeta').innerHTML = `
       <span class="chip">${iconCalendar()} ${escapeHtml(year?.name || 'Current schedule')}</span>
-      <span class="chip">${iconLock()} Paystack-ready checkout</span>
+      <span class="chip">${iconCheck()} Secure checkout</span>
     `;
     const root = document.getElementById('programs');
     if (!catalog.programs.length) {
@@ -429,6 +424,7 @@
     const stageText = Number(level.stageCount || 0) > 0 ? `${level.stageCount} stage${Number(level.stageCount) === 1 ? '' : 's'}` : 'Structured pathway';
     const capacity = level.capacity ? `${level.capacity} seats` : 'Open enrolment';
     const levelName = cleanLevelName(level.name);
+    const canPurchase = program.name !== 'School-based Swimming - SBS';
     return `
       <article class="level">
         <div class="level-media"><img src="${program.image}" alt="${escapeAttr(program.name)}" loading="lazy" /></div>
@@ -444,7 +440,8 @@
             <div class="fact">${iconUsers()} <span>${escapeHtml(capacity)}</span></div>
           </div>
           <div class="price">
-            <div><b>${money(level.fee.raw)}</b><br><span>per learner</span></div>
+            <div><b>${money(level.fee.raw)}</b><br><span>per learner / term</span></div>
+            ${canPurchase ? `<button class="btn btn-primary btn-sm" onclick="openRegistration(${escapeAttr(JSON.stringify(program.publicId))},${escapeAttr(JSON.stringify(level.publicId))})">Purchase</button>` : ''}
           </div>
         </div>
       </article>
@@ -487,11 +484,16 @@
             <label class="f">Email</label><input class="inp" id="rEmail" type="email" placeholder="name@example.com" oninput="refreshSummary()">
             <div class="fieldrow">
               <div><label class="f">Phone</label><input class="inp" id="rPhone" type="tel" placeholder="+233 20 000 0000" oninput="refreshSummary()"></div>
-              <div><label class="f">WhatsApp number <small>optional</small></label><input class="inp" id="rWa" type="tel" placeholder="+233 20 000 0000"></div>
+              <div><label class="f">WhatsApp number</label><input class="inp" id="rWa" type="tel" placeholder="+233 20 000 0000" required oninput="refreshSummary()"></div>
             </div>
+            ${selfAllowed() ? `<label class="f">Who is registering?</label>
+            <select class="inp" id="rRole" onchange="onRoleChange()">
+              <option value="guardian">Parent / Guardian (registering someone else)</option>
+              <option value="adult_learner">Adult learner (registering myself)</option>
+            </select>` : ''}
           </div>
           <div class="block">
-            <div class="learner-head"><h3>Learners</h3><button class="btn btn-light btn-sm" onclick="openLearner()">${iconPlus()} Add learner</button></div>
+            <div class="learner-head"><h3>Learners</h3><button class="btn btn-light btn-sm" onclick="openLearner()">${iconPlus()} Add learner details</button></div>
             <div id="learnerList"></div>
           </div>
           <div class="block">
@@ -504,8 +506,8 @@
             <h3>${escapeHtml(levelName)}</h3>
             <div class="muted">${escapeHtml(currentLevel.lessonsToComplete || '-')} lessons</div>
             <div id="sumLines"></div>
-            <button class="btn btn-primary btn-block" id="payBtn" style="margin-top:16px;padding:14px" disabled onclick="openPayment()">Pay</button>
-            <div class="secure">${iconLock()} Secured by <b>Paystack</b></div>
+            <button class="btn btn-primary btn-block" id="submitBtn" style="margin-top:16px;padding:14px" disabled onclick="submitRegistration()">Register</button>
+            <div class="secure">${iconCheck()} Secure checkout is handled by SwimClassManager</div>
             <div class="sum-note" id="sumNote"></div>
           </div>
         </aside>
@@ -516,8 +518,12 @@
   function openLearner(index){
     const editing = typeof index === 'number';
     editIdx = editing ? index : null;
-    const learner = editing ? learners[index] : { first:'', last:'', dob:'', gender:'Male', nationality:'', location:'', school:'', medical:'', experience:'' };
-    const genders = ['Male','Female','Other','Prefer not to say'].map(g => `<option ${g === learner.gender ? 'selected' : ''}>${g}</option>`).join('');
+    const learner = editing ? learners[index] : { first:'', last:'', dob:'', gender:'Male', nationality:'', location:'', school:'', medical:'', experience:'', relation:'' };
+    if (!['Male','Female'].includes(learner.gender)) learner.gender = 'Male';
+    const genders = ['Male','Female'].map(g => `<option ${g === learner.gender ? 'selected' : ''}>${g}</option>`).join('');
+    const isSelf = (value('rRole') || 'guardian') === 'adult_learner';
+    const relationList = [['mother','Mother'],['father','Father'],['guardian','Guardian'],['grandparent','Grandparent'],['sibling','Sibling']];
+    const relationOptions = relationList.map(([v,l]) => `<option value="${v}" ${learner.relation === v ? 'selected' : ''}>${l}</option>`).join('');
     learnerModal.innerHTML = `
       <div class="modal-head"><h3>${editing ? 'Edit learner' : 'Add learner'}</h3><button class="icon-btn" onclick="closeLearner()" aria-label="Close">${iconX()}</button></div>
       <div class="fieldrow">
@@ -528,6 +534,7 @@
         <div><label class="f">Date of birth</label><input class="inp" id="lDob" type="date" value="${escapeAttr(learner.dob)}"></div>
         <div><label class="f">Gender</label><select class="inp" id="lGender">${genders}</select></div>
       </div>
+      ${isSelf ? '' : `<label class="f">Your relationship to this learner</label><select class="inp" id="lRelation">${relationOptions}</select>`}
       <div class="fieldrow">
         <div><label class="f">Nationality</label><input class="inp" id="lNat" value="${escapeAttr(learner.nationality)}"></div>
         <div><label class="f">Residential location</label><input class="inp" id="lLoc" value="${escapeAttr(learner.location)}"></div>
@@ -557,11 +564,13 @@
       school: value('lSchool'),
       medical: value('lMed')
     };
-    if (Object.values(required).some(v => !v)) {
+    const isSelf = (value('rRole') || 'guardian') === 'adult_learner';
+    const relation = isSelf ? 'self' : value('lRelation');
+    if (Object.values(required).some(v => !v) || (!isSelf && !relation)) {
       document.getElementById('lErr').classList.add('show');
       return;
     }
-    const next = { ...required, gender:value('lGender'), experience:value('lExp') };
+    const next = { ...required, gender:value('lGender'), experience:value('lExp'), relation };
     if (editIdx === null) learners.push(next);
     else learners[editIdx] = next;
     closeLearner();
@@ -579,7 +588,7 @@
     list.innerHTML = learners.map((learner, index) => `
       <div class="learner">
         <span class="avatar">${initials(`${learner.first} ${learner.last}`)}</span>
-        <div class="learner-meta"><b>${escapeHtml(learner.first)} ${escapeHtml(learner.last)}</b><span>${escapeHtml(learner.gender)}${learner.dob ? ' - ' + age(learner.dob) + ' yrs' : ''}${learner.school ? ' - ' + escapeHtml(learner.school) : ''}</span></div>
+        <div class="learner-meta"><b>${escapeHtml(learner.first)} ${escapeHtml(learner.last)}</b><span>${escapeHtml(learner.gender)}${learner.dob ? ' - ' + age(learner.dob) + ' yrs' : ''}${learner.relation && learner.relation !== 'self' ? ' - ' + relationLabel(learner.relation) : ''}${learner.school ? ' - ' + escapeHtml(learner.school) : ''}</span></div>
         <div class="learner-actions">
           <button class="small-icon" onclick="openLearner(${index})" aria-label="Edit learner">${iconEdit()}</button>
           <button class="small-icon remove" onclick="removeLearner(${index})" aria-label="Remove learner">${iconTrash()}</button>
@@ -594,82 +603,130 @@
     refreshSummary();
   }
 
+  function onRoleChange(){
+    const isSelf = (value('rRole') || 'guardian') === 'adult_learner';
+    learners = learners.map(l => ({ ...l, relation: isSelf ? 'self' : (l.relation === 'self' ? '' : l.relation) }));
+    renderLearners();
+    refreshSummary();
+  }
+  function relationLabel(r){ return ({ mother:'Mother', father:'Father', guardian:'Guardian', grandparent:'Grandparent', sibling:'Sibling', self:'Self' })[r] || ''; }
+
   function refreshSummary(){
     if (!currentLevel) return;
     const levelName = cleanLevelName(currentLevel.name);
     const count = learners.length;
-    const subtotal = currentLevel.fee.raw * count;
-    const fee = Math.round(subtotal * CONFIG.platformFeeRate);
-    const schoolReceives = subtotal - fee;
+    const terms = termCount();
+    const subtotal = checkoutTotal();
     document.getElementById('sumLines').innerHTML = `
-      <div class="sum-line"><span>${escapeHtml(levelName)}</span><span>${money(currentLevel.fee.raw)}</span></div>
+      <div class="sum-line"><span>${escapeHtml(levelName)} / term</span><span>${money(currentLevel.fee.raw)}</span></div>
       <div class="sum-line"><span>Learners</span><span>x ${count}</span></div>
-      <div class="sum-line total"><span>Total due today</span><span>${money(subtotal)}</span></div>
+      <!-- <div class="sum-line"><span>Terms</span><span>x ${terms}</span></div> -->
+      <div class="sum-line total"><span>Estimated checkout total</span><span>${money(subtotal)}</span></div>
     `;
     document.getElementById('sumNote').textContent = count
-      ? `${catalog.school.name} receives ${money(schoolReceives)}. Platform fee: ${money(fee)}.`
-      : 'Add a learner to see the checkout total.';
-    const ok = value('rFirst') && value('rLast') && value('rEmail') && value('rPhone') && count > 0;
-    const btn = document.getElementById('payBtn');
+      ? `You will continue to SwimClassManager secure checkout after submitting.`
+      : 'Add a learner to see the estimated total.';
+    document.getElementById('sumNote').textContent = noBreakPlain(document.getElementById('sumNote').textContent);
+    const ok = value('rFirst') && value('rLast') && value('rEmail') && value('rPhone') && value('rWa') && count > 0;
+    const btn = document.getElementById('submitBtn');
     btn.disabled = !ok;
-    btn.textContent = count ? `Pay ${money(subtotal)}` : 'Pay';
+    btn.textContent = 'Register';
   }
 
-  function openPayment(channel){
-    currentChannel = channel || currentChannel || 'card';
-    const amount = currentLevel.fee.raw * learners.length;
-    const email = value('rEmail') || 'you@example.com';
-    payBox.innerHTML = paymentMarkup(email, amount, currentChannel);
-    payScrim.classList.add('open');
+  function termCount(){
+    const terms = catalog?.swimYear?.terms;
+    return Array.isArray(terms) && terms.length ? terms.length : 1;
   }
 
-  function closePayment(){ payScrim.classList.remove('open'); }
-  payScrim.addEventListener('click', e => { if (e.target === payScrim) closePayment(); });
-
-  function paymentMarkup(email, amount, channel){
-    const body = channel === 'card'
-      ? '<label class="f">Card number</label><input class="inp" value="4084 0840 8408 4081"><div class="fieldrow"><div><label class="f">Expiry</label><input class="inp" value="09 / 28"></div><div><label class="f">CVV</label><input class="inp" value="408"></div></div>'
-      : channel === 'momo'
-        ? '<label class="f">Mobile Money number</label><input class="inp" placeholder="024 000 0000"><label class="f">Network</label><select class="inp"><option>MTN</option><option>Telecel</option><option>AirtelTigo</option></select>'
-        : '<div class="notice show" style="margin:12px 0">You will be redirected to your bank secure page to authorize the transfer.</div>';
-    return `
-      <div class="pay-head">
-        <div><span class="pay-brand">pay<b>stack</b></span><span class="preview">PREVIEW</span></div>
-        <div class="pay-email">${escapeHtml(email)}</div>
-        <div class="pay-amount">${money(amount)}</div>
-      </div>
-      <div class="pay-body">
-        <div class="tabs">
-          <button class="tab ${channel === 'card' ? 'on' : ''}" onclick="openPayment('card')">Card</button>
-          <button class="tab ${channel === 'momo' ? 'on' : ''}" onclick="openPayment('momo')">Mobile Money</button>
-          <button class="tab ${channel === 'bank' ? 'on' : ''}" onclick="openPayment('bank')">Bank</button>
-        </div>
-        ${body}
-        <button class="pay-button" onclick="processPayment(true)">Pay ${money(amount)}</button>
-        <div class="pay-alt"><button onclick="processPayment(false)">Simulate a declined payment</button></div>
-        <div class="secure" style="margin-top:14px">${iconLock()} Preview checkout - no live charge is made.</div>
-      </div>
-    `;
+  function checkoutTotal(){
+    return currentLevel ? currentLevel.fee.raw * learners.length * termCount() : 0;
   }
 
-  function processPayment(ok){
-    const amount = currentLevel.fee.raw * learners.length;
-    payBox.innerHTML = `<div class="state"><div class="spinner"></div><b>Authorizing payment</b><span>Confirming your ${money(amount)} checkout preview.</span></div>`;
-    setTimeout(() => ok ? showSuccess() : showDeclined(amount), 900);
+  // Registering yourself only makes sense for adult-audience levels. Child levels
+  // are always registered by a parent / guardian.
+  function selfAllowed(){
+    return !!(currentLevel && currentLevel.audience === 'adult');
   }
 
-  function showDeclined(amount){
-    payBox.innerHTML = `<div class="state"><div class="bad">${iconX()}</div><b>Payment failed</b><span>Your ${money(amount)} payment could not be completed. No money has left your account.</span><button class="pay-button" onclick="openPayment('card')">Try again</button><button class="btn btn-light btn-block" style="margin-top:10px" onclick="closePayment()">Back to registration</button></div>`;
+  function purchasePayload(){
+    const message = [
+      `Program: ${currentProgram.name}`,
+      `Level: ${cleanLevelName(currentLevel.name)}`,
+      `Fee per learner / term: ${money(currentLevel.fee.raw)}`,
+      `Estimated checkout total: ${money(checkoutTotal())}`,
+      '',
+      value('rMsg')
+    ].join('\n').trim();
+
+    return {
+      intent: 'registration',
+      contactName: `${value('rFirst')} ${value('rLast')}`.trim(),
+      contactEmail: value('rEmail'),
+      contactPhone: value('rPhone'),
+      whatsapp: value('rWa'),
+      registrantRole: value('rRole') || 'guardian',
+      message,
+      learners: learners.map(learner => ({
+        levelPublicId: currentLevel.publicId,
+        firstName: learner.first,
+        lastName: learner.last,
+        dateOfBirth: learner.dob,
+        gender: learner.gender,
+        relation: learner.relation || undefined,
+        nationality: learner.nationality,
+        residentialLocation: learner.location,
+        medicalInfo: learner.medical,
+        swimmingExperience: learner.experience || undefined
+      }))
+    };
+  }
+
+  async function submitRegistration(){
+    const url = purchaseUrl();
+    const btn = document.getElementById('submitBtn');
+    if (!url || !btn || btn.disabled) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Creating checkout...';
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Accept':'application/json', 'Content-Type':'application/json' },
+        body: JSON.stringify(purchasePayload())
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const message = data?.errors?.[0]?.message || data?.message || `Registration failed (${response.status}).`;
+        throw new Error(message);
+      }
+
+      if (data?.status === 'received') {
+        showSuccess();
+        return;
+      }
+
+      const checkoutUrl = data?.transaction?.authorizationUrl;
+      if (!checkoutUrl) throw new Error('SwimClassManager did not return a checkout link.');
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      refreshSummary();
+      showSubmitError(error.message || 'Could not create checkout. Please try again.');
+    }
+  }
+
+  function showSubmitError(message){
+    const note = document.getElementById('sumNote');
+    if (note) note.textContent = message;
   }
 
   function showSuccess(){
-    closePayment();
     const levelName = cleanLevelName(currentLevel.name);
     const count = learners.length;
-    const total = currentLevel.fee.raw * count;
+    const total = checkoutTotal();
     regPanel.innerHTML = `
-      <div class="panel-head"><div><h2>Registration complete</h2><p>Reference SAG-${Math.random().toString(16).slice(2,8).toUpperCase()}</p></div><button class="icon-btn" onclick="closeRegistration()" aria-label="Close">${iconX()}</button></div>
-      <div class="state" style="background:#fff"><div class="ok">${iconCheck()}</div><h2>${escapeHtml(levelName)} registration received</h2><span>${count} learner${count === 1 ? '' : 's'} registered for ${money(total)}. Swim Africa Ghana will follow up with confirmation and class details.</span><button class="btn btn-primary" style="margin-top:24px" onclick="closeRegistration()">Done</button></div>
+      <div class="panel-head"><div><h2>Registration submitted</h2><p>Reference SAG-${Math.random().toString(16).slice(2,8).toUpperCase()}</p></div><button class="icon-btn" onclick="closeRegistration()" aria-label="Close">${iconX()}</button></div>
+      <div class="state" style="background:#fff"><div class="ok">${iconCheck()}</div><h2>${escapeHtml(levelName)} registration received</h2><span>${count} learner${count === 1 ? '' : 's'} submitted for ${money(total)}. Swim&nbsp;Africa&nbsp;Ghana will follow up with payment instructions, confirmation, and class details.</span><button class="btn btn-primary" style="margin-top:24px" onclick="closeRegistration()">Done</button></div>
     `;
   }
 
@@ -695,6 +752,8 @@
   }
   function escapeHtml(value){ return String(value == null ? '' : value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escapeAttr(value){ return escapeHtml(value).replace(/"/g,'&quot;'); }
+  function noBreakName(value){ return escapeHtml(value).replace(/Swim Africa Ghana/g, 'Swim&nbsp;Africa&nbsp;Ghana'); }
+  function noBreakPlain(value){ return String(value == null ? '' : value).replace(/Swim Africa Ghana/g, 'Swim\u00A0Africa\u00A0Ghana'); }
   function iconCalendar(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg>'; }
   function iconLock(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
   function iconBook(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v18H6a2 2 0 0 1-2-1.5Z"/><path d="M8 7h8"/></svg>'; }
