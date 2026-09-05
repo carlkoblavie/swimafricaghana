@@ -38,7 +38,11 @@
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{
     font-family:'Inter',system-ui,-apple-system,sans-serif;
-    color:var(--body);background:var(--sky);line-height:1.65;
+    color:var(--body);
+    background:
+      linear-gradient(rgba(240,247,252,.83), rgba(240,247,252,.85)),
+      url("assets/lane-photo.png") center center / cover fixed;
+    background-color:var(--sky);line-height:1.65;
     -webkit-font-smoothing:antialiased;overflow-x:hidden;
   }
   h1,h2,h3,h4{font-family:'Poppins',system-ui,sans-serif;color:var(--ink);line-height:1.12;letter-spacing:-.02em;font-weight:700}
@@ -254,6 +258,12 @@
   .band-inner h2{color:#fff;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:10px 0 14px}
   .band-inner .eyebrow{color:var(--orange-soft)}
   .band-inner p{color:rgba(255,255,255,.92);margin-bottom:22px}
+
+  /* deep-blue band — flowing wave lines + soft bubbles, matching the app header style */
+  .splash-band{background:linear-gradient(115deg,#2E7EC9 0%,#0E4E97 55%,#0A3B7C 100%)}
+  .splash-band::after{display:none}
+  .band-splash{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .splash-band .band-inner{position:relative;z-index:1}
 
   /* team */
   .team-banner{border-radius:20px;overflow:hidden;margin-bottom:38px;box-shadow:0 26px 54px -40px rgba(10,52,80,.5)}
@@ -631,8 +641,32 @@
 <!-- ===== Community band ===== -->
 <section aria-label="Community">
   <div class="wrap">
-    <div class="band reveal">
-      <img src="assets/community.jpg" alt="Swim Africa Ghana swimmers and coaches celebrating poolside" loading="lazy" />
+    <div class="band splash-band reveal">
+      <svg class="band-splash" viewBox="0 0 1200 340" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+        <!-- soft light waves rising along the bottom -->
+        <path fill="#FFFFFF" opacity="0.09" d="M0,246 C160,208 360,232 610,268 C840,300 1030,300 1200,284 L1200,340 L0,340 Z"/>
+        <path fill="#FFFFFF" opacity="0.06" d="M0,284 C200,250 430,270 710,300 C930,322 1060,318 1200,308 L1200,340 L0,340 Z"/>
+        <!-- thin flowing current lines -->
+        <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+          <path stroke-opacity="0.20" stroke-width="2" d="M-30,224 C180,192 380,214 630,252 C860,286 1050,292 1240,272"/>
+          <path stroke-opacity="0.14" stroke-width="2" d="M-30,262 C170,238 410,250 700,286 C930,312 1070,308 1240,296"/>
+          <path stroke-opacity="0.10" stroke-width="1.5" d="M-30,196 C220,168 430,190 690,224 C910,252 1080,256 1240,242"/>
+        </g>
+        <!-- soft bubbles -->
+        <g fill="#FFFFFF">
+          <circle cx="300" cy="222" r="5" opacity="0.30"/>
+          <circle cx="345" cy="240" r="3" opacity="0.24"/>
+          <circle cx="560" cy="214" r="4" opacity="0.26"/>
+          <circle cx="700" cy="150" r="4" opacity="0.32"/>
+          <circle cx="672" cy="205" r="6" opacity="0.18"/>
+          <circle cx="905" cy="192" r="3" opacity="0.28"/>
+          <circle cx="980" cy="120" r="3" opacity="0.30"/>
+          <circle cx="1010" cy="152" r="5" opacity="0.40"/>
+          <circle cx="1056" cy="138" r="3" opacity="0.55"/>
+          <circle cx="1088" cy="176" r="3" opacity="0.22"/>
+          <circle cx="1150" cy="120" r="4" opacity="0.26"/>
+        </g>
+      </svg>
       <div class="band-inner">
         <span class="eyebrow">Our community</span>
         <h2>More than lessons — a swimming family.</h2>
