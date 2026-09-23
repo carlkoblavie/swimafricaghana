@@ -204,6 +204,7 @@
   .about-grid p{margin-bottom:15px}
   .about-img{border-radius:20px;overflow:hidden;box-shadow:0 30px 60px -38px rgba(10,52,80,.55)}
   .about-img img{width:100%;aspect-ratio:4/3;object-fit:cover}
+  .about-img video{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#082846}
   .creds{margin-top:22px;border-left:3px solid var(--orange);padding-left:18px}
   .creds h4{font-size:1rem;margin-bottom:6px}
   .creds .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -511,7 +512,12 @@
           <div class="chips"><span>ASCA Level 4 Coach</span><span>World Aquatics Assistant Coach</span><span>National Swim Coach</span></div>
         </div>
       </div>
-      <div class="about-img reveal"><img src="assets/teaching.jpg" alt="A Swim Africa Ghana coach teaching children in the pool" loading="lazy" /></div>
+      <div class="about-img reveal">
+        <video controls playsinline preload="metadata" aria-label="Swim Africa Ghana in action">
+          <source src="assets/swim-africa-ghana.mp4" type="video/mp4" />
+          Your browser does not support embedded video. <a href="assets/swim-africa-ghana.mp4">Watch the video</a>.
+        </video>
+      </div>
     </div>
   </div>
 </section>
